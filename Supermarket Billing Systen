@@ -1,0 +1,207 @@
+// Name:Mohammad Shtayeh//Date:17/Jan/2024
+
+#include <stdio.h>
+#include <stdlib.h>
+
+void printMenu();  //Defining the function that is going to print out the list of options
+double costFinder(char,int);  // Defining the function that is going to print the price of every single product
+double shekelToDollar(double);  // Defining the function that is going to convert the currency to USD
+double discountCalculator(double);  // Defining the function that is going to subtract the discount from the sum after adding the tax
+double remaining(double,double);  // Defining the function that is going to give us how much change we get after paying
+// Defining the variables
+char element;
+int quantity;
+int elementInShekel;
+double sum;
+double sumAfterTax;
+double finalCost;
+int service;
+double paid;
+double rem;
+int firstValueEncountered = 0; // flag
+double max, min;
+
+
+void resetValues() {
+// Defining the function that is going to reset the values of all the variables for another customer
+    elementInShekel = 0;
+    element = '\0';
+    quantity = 0;
+    service = 0;
+    sum = 0;
+    paid = 0;
+    rem = 0;
+    sumAfterTax = 0;
+    finalCost = 0;
+    firstValueEncountered = 0;
+
+}
+
+
+int main()
+{
+
+ while (1){
+
+        printf("Please enter your product\'s element (a,b,c,d,e) or X to finish.\n");
+        scanf(" %c.\n",&element); // You enter your product's element
+        if(element=='X' || element=='x'){
+            // If you enter X or x you will finish entering your products and the list of options will appear
+            printMenu();
+            break;
+            }
+        else
+            if (element!='a'&& element!='b'&& element!='c'&& element!='d' && element!='e'&&
+                 element!='A'&& element!='B'&& element!='C'&& element!='D' && element!='E')
+            // If you enter anything other than the available elements of the products you will be asked to enter again
+            continue;
+
+        printf("Please enter your product\'s quantity.\n");
+        scanf(" %d.\n",&quantity);
+        if (quantity<0)
+        // if you enter anything other than positive numbers you will be asked again to enter a valid value
+        continue;
+
+
+        /* Called the function here to print the price of each product when their element
+        and quantity are entered, and to add each product's price to the sum*/
+
+        printf("The Product\'s cost = %.2f NIS\n",costFinder(element,quantity));
+        sum+= costFinder(element,quantity);
+
+        // I put a flag so that the first value that passes here is assigned for max and min and non other than it
+        if (!firstValueEncountered) {
+            min = costFinder(element,quantity);
+            max = costFinder(element,quantity);
+            firstValueEncountered = 1;
+            }
+
+        // We compare between the products prices to print the maximum and minimum ones
+        if (costFinder(element,quantity)>=max)
+        max = costFinder(element,quantity);
+
+        if (costFinder(element,quantity)<=min)
+        min = costFinder(element,quantity);
+
+
+}
+        double sumAfterTax = sum +(sum*0.16);
+        // The sum after tax
+        double totalDiscount = (sumAfterTax - discountCalculator(sumAfterTax));
+        // We subtract the cost with the tax and discount from the cost with tax only to get the amount of discount we got
+
+     while (1) {
+        printf("Please enter the number of the service you want.\n");
+        if (scanf(" %d", &service) != 1) {
+            // If the input is not a valid integer, clear the input buffer
+            while (getchar() != '\n');  // Clear the buffer until a newline character is found
+            printf("Error: enter a valid number.\n");
+            continue;
+        }
+        // Switch function to toggle between the options shown in the list
+     switch(service) {
+        case 1:
+            printf("The total cost after discount (including tax) = %.2f NIS.\n", discountCalculator(sumAfterTax));
+            break;
+        case 2:
+            printf("The total cost after discount (including tax) = %.2f USD.\n", shekelToDollar(discountCalculator(sumAfterTax)));
+            break;
+        case 3:
+            printf("The total discount = %.2f NIS.\n", totalDiscount);
+            break;
+        case 4:
+            printf("Please enter how much you are paying in NIS.\n");
+            scanf("%lf",&paid);
+            printf("The Change = %.2f NIS.\n", remaining(paid,discountCalculator(sumAfterTax)));
+            break;
+        case 5:
+            printf("The maximum cost for one product = %.2f NIS.\n",max);
+            printf("The minimum cost for one product = %.2f NIS.\n", min);
+            break;
+        case 6:
+            main();
+            return 0;
+        case 7:
+            resetValues();
+            main();
+            return 0;
+        case 8:
+            return 0;
+        default:
+            printf("Error: enter a valid number.\n");
+            continue;
+    }
+
+
+    }
+
+    }
+
+
+
+
+void printMenu(void) {
+// The list of options that appears to the customer so s/he can choose from
+    printf("1: The bill in Shekel.\n");
+    printf("2: The bill in Dollar.\n");
+    printf("3: Discount in Shekel.\n");
+    printf("4: Pay.\n");
+    printf("5: Maximum and Minimum Price.\n");
+    printf("6: Cancel.\n");
+    printf("7: Next Customer.\n");
+    printf("8: Exit.\n");
+
+}
+
+double costFinder(char element,int quantity) {
+/* I put an if function that takes (element) and (quantity) and gives the elementInShekel variable value based on the element entered
+ then it returns the cost of one product by multiplying elementInShekel with the quantity*/
+
+    if (element=='a'||element=='A'){
+            elementInShekel=2;
+            }
+    else if (element=='b'||element=='B'){
+            elementInShekel=4;
+            }
+    else if (element=='c'||element=='C'){
+        elementInShekel=6;
+    }
+    else if (element=='d'||element=='D'){
+            elementInShekel=8;
+    }
+    else if (element=='e'||element=='E'){
+            elementInShekel=10;
+    }
+
+    double oneProdCost = ((double)elementInShekel*(double)quantity);
+
+
+    return oneProdCost;
+    }
+
+
+
+double shekelToDollar(double finalCost) {
+// it divides the final cost with tax and discount and converts from ILS to USD
+return (finalCost/3.5);
+}
+
+double discountCalculator(double sumAfterTax){
+// It takes the sum with tax and adds the discount to it based on what range if falls within
+    if (sumAfterTax>100&&sumAfterTax<1000)
+        finalCost = sumAfterTax-(sumAfterTax*0.05);
+    else if (sumAfterTax > 1000)
+        finalCost = sumAfterTax-(sumAfterTax*0.10);
+    else
+        finalCost = sumAfterTax;
+
+return finalCost;
+
+}
+
+double remaining (double paid ,double finalCost) {
+/* it asks the customer to enter the amount they are paying with then
+subtract the final cost from it and it will show them how much they get back*/
+rem = (paid - finalCost);
+return rem;
+}
